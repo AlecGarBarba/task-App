@@ -1,8 +1,18 @@
-//create read update delete
+/**
+ * The reason of being of this file is to insert code related to using MongoDB,auth, or any other 
+ *subject covered in the course that doesn't go to production.
+ */
 
 const mongodb = require('mongodb');
 const MongoClient = mongodb.MongoClient;
 const ObjectID = mongodb.ObjectID;
+
+
+//How to create our own id, before we insert a document :)
+const id = new ObjectID()
+console.log(id);
+console.log(id.getTimestamp())
+
 const connectionURL = 'mongodb://127.0.0.1:27017' //needs to be as IS
 const databaseName = 'task-manager'
 
@@ -14,7 +24,52 @@ MongoClient.connect(connectionURL,{ useNewUrlParser: true, useUnifiedTopology: t
 
     const db =client.db(databaseName);
 
-    //This returns the first match
+    //insert one document
+    db.collection('users').insertOne({
+        name: 'Danieeel',
+        age: 26,
+    },(error,result)=>{
+        if(error){
+            return console.log("Unable to insert user")
+        }
+        console.log(result.ops)
+    })
+    //insert multiple documents
+    db.collection('users').insertMany([
+        {
+            name:'Mariana',
+            age: 21
+        },{
+            name: 'Kino',
+            age: 0.1
+        }
+        ],(error,result)=>{
+            if(error){
+                return console.log("Unable to insert documents")
+            }
+
+            console.log(result.ops)
+    })
+
+    db.collection('tasks').insertMany([
+        {
+            description:'Take out the trash',
+            completed: true
+        },{
+            description:'Clean the dishes',
+            completed: true
+        },{
+            description:'Exercise',
+            completed: false
+        }
+        ],(error,result)=>{
+            if(error){
+                return console.log("Unable to insert documents")
+            }
+            console.log(result.ops)
+    })
+
+     //This returns the first match
    db.collection('users').findOne({ name: 'Danieeel', age: 2910 },(error, document)=>{
     if(error){
         return console.log("Unable to fetch specified user")
