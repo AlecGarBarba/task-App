@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+
 const Task = mongoose.model('Tasks',
     {
         description:{
@@ -11,6 +12,11 @@ const Task = mongoose.model('Tasks',
         completed: {
             type: Boolean,
             default: false,
+        },
+        owner: {
+            type: mongoose.Schema.Types.ObjectId, //like foreign key
+            required: true,
+            ref: 'User'
         }
 })
 
