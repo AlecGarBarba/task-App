@@ -16,11 +16,34 @@ router.post('/tasks', auth,async (req,res)=>{
         res.status(400).send(error.message)
     }
 });
-router.get('/tasks', auth,async (req,res)=>{
 
+// GET /tasks?completed=true     || /tasks?completed=false   ////filtering
+//GET /tasks?limit=x&skip=10                                 /////PAGINATION
+//GET /task=sortBy=createdAt_asc || sortBy=updatedAt_desc    /////sorting
+router.get('/tasks', auth,async (req,res)=>{
+    const match ={}
+    const sort ={}
+    const ascendingOrder = 1;
+    const descendingOrder = -1;
+
+    if(req.query.completed){
+        match.completed = req.query.completed ==='true';
+    }
+    if(req.query.sortBy){
+        const parts = req.query.sortBy.split('_');
+        sort[parts[0]] = parts[1] == 'desc' ? descendingOrder : ascendingOrder;
+    }
     try{
         const user = req.user
-        await req.user.populate('tasks').execPopulate();
+        await req.user.populate({
+            path: 'tasks',
+            match,
+            options: {
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip),
+                sort
+            }
+        }).execPopulate();
         res.send(user.tasks);
     }catch (error){
         res.status(500).send()  //internal server error

@@ -49,7 +49,12 @@ const userSchema= new mongoose.Schema({
             type: String,
             required: true
         }
-    }]
+    }],
+    avatar: {
+        type: Buffer
+    }
+},{ //secod object is the options
+    timestamps: true
 });
 
 userSchema.virtual('tasks',{     //Create a ref between tasks and users(owners)
@@ -75,6 +80,7 @@ userSchema.methods.toJSON = function(){
 
     delete userObject.password;
     delete userObject.tokens;
+    delete userObject.avatar;
     return userObject;
 }
 
@@ -88,7 +94,7 @@ userSchema.statics.findByCredentials =async (email,password)=>{
 } 
 
 
-//hash the plain tect password
+//hash the plain text password
 userSchema.pre('save', async function(next){
     const user = this;
     
