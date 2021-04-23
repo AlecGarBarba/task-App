@@ -4,7 +4,7 @@ const userRouter = require('./routers/userRouter');
 const taskRouter = require('./routers/taskRouter');
 require('./db/mongoose.js'); //just need this to run.
 const app = express();
-const port = process.env.PORT || 3000
+const port = process.env.PORT  
 
 app.use(express.json()); //automatically parse json :)
 

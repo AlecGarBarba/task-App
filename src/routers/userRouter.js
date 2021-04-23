@@ -1,6 +1,7 @@
 const express = require('express');
 const router = new express.Router();
 const sharp = require('sharp'); //img formatting and shape
+const {sendWelcomeEmail, sendCancelationEmail} = require('../emails/account')
 /*************************Mongoose/DB handling ***********/
 const User = require('../models/user');
 /*************Middle ware ******************************/
@@ -10,10 +11,11 @@ const upload = require('../middleware/uploading')
 
 
 router.post('/users' ,async (req,res)=>{ 
+    const user = new User(req.body);
     try{
-        const user = new User(req.body);
+        await user.save();
+        sendWelcomeEmail(user.email, user.name); //no need to wait the API
         const token = await user.generateAuthToken();
-        await user.save()
         res.status(201).send({user, token})
     } catch (error){
         res.status(400).send(error.message)
@@ -77,6 +79,7 @@ router.patch('/users/me', auth, async(req,res)=>{
 router.delete('/users/me', auth, async (req,res)=>{
     try{
         await req.user.remove()
+        sendCancelationEmail(req.user.email, req.user.name)
         res.send(req.user)
     }catch(error){
         console.log(error.message)
