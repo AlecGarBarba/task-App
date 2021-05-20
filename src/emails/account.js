@@ -15,7 +15,7 @@ const sendWelcomeEmail = (email, name)=>{
         if(error){
             return console.log('Error:',error);
         }
-        console.log(body)
+        //console.log(body)
     });
 }
 
